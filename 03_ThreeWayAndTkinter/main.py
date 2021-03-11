@@ -1,9 +1,8 @@
 import tkinter as tk
 
-class Game(tk.Frame):
+class Game(tk.Tk):
     def __init__(self, master=None):
         super().__init__(master)
-        self.grid()
         self.CreateWidgets()
 
     def CreateWidgets(self):
@@ -15,8 +14,14 @@ class Game(tk.Frame):
 
         for i in range(1, 5):
             for j in range(4):
-                self.tmp_but = tk.Button(self, text=f"{i + j}", command=self.Shift)
-                self.tmp_but.grid(row=i, column=j)
+                self.tmp_but = tk.Button(self, text=f"{4 * (i - 1) + j + 1}", command=self.Shift)
+                self.tmp_but.grid(row=i, column=j, sticky="NEWS")
+
+        for i in range(1, 5):
+            self.rowconfigure(i, weight=1)
+
+        for i in range(4):
+            self.columnconfigure(i, weight=1)
 
     def CreateGame(self):
         pass
@@ -25,5 +30,6 @@ class Game(tk.Frame):
         pass
 
 game = Game()
-game.master.title("15")
+game.title("15")
+game.geometry("800x600")
 game.mainloop()
