@@ -12,10 +12,14 @@ class Game(tk.Tk):
         self.new_button.grid(row=0, column=0, columnspan=2)
         self.quit_button.grid(row=0, column=2, columnspan=2)
 
-        for i in range(1, 5):
+        for i in range(1, 4):
             for j in range(4):
                 self.tmp_but = tk.Button(self, text=f"{4 * (i - 1) + j + 1}", command=self.Shift)
                 self.tmp_but.grid(row=i, column=j, sticky="NEWS")
+
+        for j in range(3):
+            self.tmp_but = tk.Button(self, text=f"{13 + j}", command=self.Shift)
+            self.tmp_but.grid(row=4, column=j, sticky="NEWS")
 
         for i in range(1, 5):
             self.rowconfigure(i, weight=1)
@@ -31,5 +35,5 @@ class Game(tk.Tk):
 
 game = Game()
 game.title("15")
-game.geometry("800x600")
+game.geometry("320x240")
 game.mainloop()
