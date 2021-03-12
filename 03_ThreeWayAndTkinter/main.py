@@ -1,6 +1,8 @@
 import tkinter as tk
 import random
 
+from tkinter import messagebox as msgbox
+
 class Redirect:
     def __init__(self, function, button):
         self.function = function
@@ -28,6 +30,12 @@ class Game(tk.Tk):
 
         self.new_button.grid(row=0, column=0, columnspan=2)
         self.quit_button.grid(row=0, column=2, columnspan=2)
+
+        for i in range(1, 5):
+            self.rowconfigure(i, weight=1)
+
+        for i in range(4):
+            self.columnconfigure(i, weight=1)
 
     def RestartGame(self):
         for row in self.elements:
@@ -71,13 +79,6 @@ class Game(tk.Tk):
             self.elements[np_0 - 1][np_1].grid_remove()
             self.elements[np_0 - 1][np_1] = None
 
-        for i in range(1, 5):
-            self.rowconfigure(i, weight=1)
-
-        for i in range(4):
-            self.columnconfigure(i, weight=1)
-
-
     def Shift(self, button):
         info = button.grid_info()
         col = info["column"]
@@ -93,6 +94,26 @@ class Game(tk.Tk):
             self.elements[row - 1][col].grid_remove()
             self.elements[row - 1][col] = None
             self.none_position = (row, col)
+
+        if self.GameIsOver():
+            msgbox.showinfo(title = "win", message = "You win!")
+            self.RestartGame()
+
+    def GameIsOver(self):
+        for row_num in range(3):
+            for col_num in range(4):
+                if self.elements[row_num][col_num] == None:
+                    return False
+                if self.elements[row_num][col_num]["text"] != row_num * 4 + col_num + 1:
+                    return False
+
+        for col_num in range(3):
+            if self.elements[3][col_num] == None:
+                return False
+            if self.elements[3][col_num]["text"] != 13 + col_num:
+                return False
+
+        return True
 
 game = Game()
 game.mainloop()
