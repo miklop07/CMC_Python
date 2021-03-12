@@ -16,6 +16,8 @@ class Game(tk.Tk):
 
         self.elements = [[None for i in range(4)] for j in range(4)]
         self.none_position = (0, 0)
+        self.title("15")
+        self.geometry("320x240")
 
         self.CreateWidgets()
         self.CreateGame()
@@ -59,7 +61,7 @@ class Game(tk.Tk):
             self.elements[3][j].grid(row=4, column=j, sticky="NEWS")
 
         self.none_position = (random.randrange(1, 5), random.randrange(0, 4))
-        
+
         np_0 = self.none_position[0]
         np_1 = self.none_position[1]
         if self.none_position != (4, 3):
@@ -93,6 +95,4 @@ class Game(tk.Tk):
             self.none_position = (row, col)
 
 game = Game()
-game.title("15")
-game.geometry("320x240")
 game.mainloop()
