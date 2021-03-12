@@ -1,4 +1,5 @@
 import tkinter as tk
+import random
 
 class Redirect:
     def __init__(self, function, button):
@@ -20,13 +21,16 @@ class Game(tk.Tk):
         self.CreateGame()
 
     def CreateWidgets(self):
-        self.new_button = tk.Button(self, text="new", command=self.CreateGame)
-        self.quit_button = tk.Button(self, text="quit", command=self.quit)
+        self.new_button = tk.Button(self, text="New", command=self.CreateGame)
+        self.quit_button = tk.Button(self, text="Exit", command=self.quit)
 
         self.new_button.grid(row=0, column=0, columnspan=2)
         self.quit_button.grid(row=0, column=2, columnspan=2)
 
     def CreateGame(self):
+        rows = set()
+        cols = set()
+
         for i in range(1, 4):
             for j in range(4):
                 self.elements[i - 1][j] = tk.Button(self, text=f"{4 * (i - 1) + j + 1}")
