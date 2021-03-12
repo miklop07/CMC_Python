@@ -87,7 +87,6 @@ class Game(tk.Tk):
         np_0 = self.none_position[0]
         np_1 = self.none_position[1]
         if abs(row - np_0) == 1 and col == np_1 or abs(col - np_1) == 1 and row == np_0:
-            print(button["text"])
             self.elements[np_0 - 1][np_1] = tk.Button(self, text=button["text"])
             self.elements[np_0 - 1][np_1]["command"] = Redirect(self.Shift, self.elements[np_0 - 1][np_1])
             self.elements[np_0 - 1][np_1].grid(row=np_0, column=np_1, sticky="NEWS")
@@ -103,20 +102,14 @@ class Game(tk.Tk):
         for row_num in range(3):
             for col_num in range(4):
                 if self.elements[row_num][col_num] == None:
-                    print("droppedNone", row_num, col_num)
                     return False
                 if int(self.elements[row_num][col_num]["text"]) != row_num * 4 + col_num + 1:
-                    print(row_num * 4 + col_num + 1)
-                    print(self.elements[row_num][col_num]["text"])
-                    print("dropped", row_num, col_num)
                     return False
 
         for col_num in range(3):
             if self.elements[3][col_num] == None:
-                print("droppedNone", 3, col_num)
                 return False
             if int(self.elements[3][col_num]["text"]) != 13 + col_num:
-                print("dropped", 3, col_num)
                 return False
 
         return True
