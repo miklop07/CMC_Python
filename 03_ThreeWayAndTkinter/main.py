@@ -21,26 +21,53 @@ class Game(tk.Tk):
         self.CreateGame()
 
     def CreateWidgets(self):
-        self.new_button = tk.Button(self, text="New", command=self.CreateGame)
+        self.new_button = tk.Button(self, text="New", command=self.RestartGame)
         self.quit_button = tk.Button(self, text="Exit", command=self.quit)
 
         self.new_button.grid(row=0, column=0, columnspan=2)
         self.quit_button.grid(row=0, column=2, columnspan=2)
 
-    def CreateGame(self):
-        rows = set()
-        cols = set()
+    def RestartGame(self):
+        for row in self.elements:
+            for but in row:
+                if but != None:
+                    but.grid_remove()
 
+        self.CreateGame()
+
+    def CreateGame(self):
+        numbers = [i for i in range(1, 16)]
         for i in range(1, 4):
             for j in range(4):
-                self.elements[i - 1][j] = tk.Button(self, text=f"{4 * (i - 1) + j + 1}")
+                rand_num = random.choice(numbers)
+                numbers.remove(rand_num)
+                if rand_num <= 9:
+                    self.elements[i - 1][j] = tk.Button(self, text=f" {rand_num}")
+                else:
+                    self.elements[i - 1][j] = tk.Button(self, text=f"{rand_num}")
                 self.elements[i - 1][j]["command"] = Redirect(self.Shift, self.elements[i - 1][j])
                 self.elements[i - 1][j].grid(row=i, column=j, sticky="NEWS")
 
         for j in range(3):
-            self.elements[3][j] = tk.Button(self, text=f"{13 + j}")
+            rand_num = random.choice(numbers)
+            numbers.remove(rand_num)
+            if rand_num <= 9:
+                self.elements[3][j] = tk.Button(self, text=f" {rand_num}")
+            else:
+                self.elements[3][j] = tk.Button(self, text=f"{rand_num}")
             self.elements[3][j]["command"] = Redirect(self.Shift, self.elements[3][j])
             self.elements[3][j].grid(row=4, column=j, sticky="NEWS")
+
+        self.none_position = (random.randrange(1, 5), random.randrange(0, 4))
+        
+        np_0 = self.none_position[0]
+        np_1 = self.none_position[1]
+        if self.none_position != (4, 3):
+            self.elements[3][3] = tk.Button(self, text=self.elements[np_0 - 1][np_1]["text"])
+            self.elements[3][3]["command"] = Redirect(self.Shift, self.elements[3][3])
+            self.elements[3][3].grid(row=4, column=3, sticky="NEWS")
+            self.elements[np_0 - 1][np_1].grid_remove()
+            self.elements[np_0 - 1][np_1] = None
 
         for i in range(1, 5):
             self.rowconfigure(i, weight=1)
@@ -48,7 +75,6 @@ class Game(tk.Tk):
         for i in range(4):
             self.columnconfigure(i, weight=1)
 
-        self.none_position = (4, 3)
 
     def Shift(self, button):
         info = button.grid_info()
