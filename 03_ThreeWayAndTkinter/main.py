@@ -96,21 +96,27 @@ class Game(tk.Tk):
             self.none_position = (row, col)
 
         if self.GameIsOver():
-            msgbox.showinfo(title = "win", message = "You win!")
+            msgbox.showinfo(message = "You win!")
             self.RestartGame()
 
     def GameIsOver(self):
         for row_num in range(3):
             for col_num in range(4):
                 if self.elements[row_num][col_num] == None:
+                    print("droppedNone", row_num, col_num)
                     return False
-                if self.elements[row_num][col_num]["text"] != row_num * 4 + col_num + 1:
+                if int(self.elements[row_num][col_num]["text"]) != row_num * 4 + col_num + 1:
+                    print(row_num * 4 + col_num + 1)
+                    print(self.elements[row_num][col_num]["text"])
+                    print("dropped", row_num, col_num)
                     return False
 
         for col_num in range(3):
             if self.elements[3][col_num] == None:
+                print("droppedNone", 3, col_num)
                 return False
-            if self.elements[3][col_num]["text"] != 13 + col_num:
+            if int(self.elements[3][col_num]["text"]) != 13 + col_num:
+                print("dropped", 3, col_num)
                 return False
 
         return True
