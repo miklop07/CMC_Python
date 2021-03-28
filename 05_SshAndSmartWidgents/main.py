@@ -7,7 +7,6 @@ class Application(tk.Frame):
         self.master.title(title)
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
-        # self.master.geometry("800x600")
         self.grid(sticky="NEWS")
         self.create_widgets()
         for column in range(self.grid_size()[0]):
@@ -19,13 +18,32 @@ class Application(tk.Frame):
         pass
 
 class App(Application):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.is_drawing = False
+
     def create_widgets(self):
         self.text = tk.Text(self, undo=True)
         self.text.grid(row=0, column=0, sticky="NEWS")
 
         self.graphics = tk.Canvas(self)
+        self.graphics.bind("<Button-1>", func=self.MouseButtonOn)
+        self.graphics.bind("<ButtonRelease-1>", func=self.MouseButtonOff)
+        self.graphics.bind("<Motion>", func=self.Draw)
         self.graphics.grid(row=0, column=1, sticky="NEWS")
 
+    def MouseButtonOn(self, event):
+        print("+")
+        self.is_drawing = True
+
+    def MouseButtonOff(self, event):
+        print("-")
+        self.is_drawing = False
+
+    def Draw(self, event):
+        if self.is_drawing:
+            print("=")
     
 
 app = App(title="Graph Edit")
