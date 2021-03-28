@@ -1,4 +1,5 @@
 import tkinter as tk
+import re
 
 class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
@@ -23,35 +24,72 @@ class App(Application):
         self.is_drawing = False
         self.begin_pos = (None, None)
         self.current_oval = None
+        self.busy = False
+        self.current_string = ""
+        self.true_string_regexp = r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>\s+(\d+\.\d+)\s+#([0-9A-F]+)\s+([a-zA-Z]+)"
+
+
+        self.www = 1
 
     def create_widgets(self):
         self.text = tk.Text(self, undo=True)
+        self.text.bind('<<Modified>>', func=self.CheckText)
+        self.text.tag_configure("WrongString", background="red")
         self.text.grid(row=0, column=0, sticky="NEWS")
 
         self.graphics = tk.Canvas(self)
         self.graphics.bind("<Button-1>", func=self.MouseButtonOn)
         self.graphics.bind("<ButtonRelease-1>", func=self.MouseButtonOff)
         self.graphics.bind("<Motion>", func=self.Draw)
-        self.graphics.tag_bind(tagOrId="obj",  sequence="<Button-1>", func=lambda x: print("asd"))
+
+        self.graphics.tag_bind(tagOrId="obj", sequence="<Button-1>", func=self.MoveBegin)
+        self.graphics.tag_bind(tagOrId="obj", sequence="<ButtonRelease-1>", func=self.MoveEnd)
+        self.graphics.tag_bind(tagOrId="obj", sequence="<Motion>", func=self.Move)
+
         self.graphics.grid(row=0, column=1, sticky="NEWS")
 
+    def CheckText(self, event):
+
+        self.text.edit_modified(False)
+
+    def MoveBegin(self, event):
+        self.busy = True
+
+    def Move(self, event):
+        pass
+        # if self.busy:
+        #     self.graphics.move(self.save, 1, 1)
+
+    def MoveEnd(self, event):
+        self.busy = False
+
     def MouseButtonOn(self, event):
-        self.begin_pos = (event.x, event.y)
-        self.is_drawing = True
+        # print(self.busy)
+        if not self.busy:
+            self.begin_pos = (event.x, event.y)
+            self.is_drawing = True
 
     def MouseButtonOff(self, event):
+        self.www += 1
+        if self.current_string != "":
+            params = self.graphics.itemconfigure(self.current_oval)
+            self.current_string += " " + str(params["width"][-1])
+            self.current_string += " " + str(params["fill"][-1])
+            self.current_string += " " + str(params["outline"][-1])
+            self.text.insert('end', self.current_string + "\n")
+            self.current_string = ""
+
         self.begin_pos = (None, None)
         self.is_drawing = False
-        print(self.graphics.find_all())
-        # self.current_oval.bind("<Button-1>", func=lambda e: print("!"))
         self.current_oval = None
 
     def Draw(self, event):
         if self.is_drawing:
             if self.current_oval:
                 self.graphics.delete(self.current_oval)
-            self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y, tags="obj", fill="#FFFFFF")
-    
+            self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y, tags="obj", fill="#FFFFFF", width=self.www)
+            self.current_string = f"<{self.begin_pos[0]} {self.begin_pos[1]} {event.x} {event.y}>"
+            # self.save = self.current_oval
 
 app = App(title="Graph Edit")
 app.mainloop()
