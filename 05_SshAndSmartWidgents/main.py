@@ -22,6 +22,8 @@ class App(Application):
         super().__init__(*args, **kwargs)
 
         self.is_drawing = False
+        self.begin_pos = (None, None)
+        self.current_oval = None
 
     def create_widgets(self):
         self.text = tk.Text(self, undo=True)
@@ -35,14 +37,23 @@ class App(Application):
 
     def MouseButtonOn(self, event):
         print("+")
+        self.begin_pos = (event.x, event.y)
+        print(self.begin_pos)
         self.is_drawing = True
 
     def MouseButtonOff(self, event):
         print("-")
+        self.begin_pos = (None, None)
+        print(self.begin_pos)
         self.is_drawing = False
+        self.current_oval = None
 
     def Draw(self, event):
         if self.is_drawing:
+            if self.current_oval:
+                self.graphics.delete(self.current_oval)
+                print("delete")
+            self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y)
             print("=")
     
 
