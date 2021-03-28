@@ -1,5 +1,4 @@
 import tkinter as tk
-import inspect
 
 class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
@@ -33,28 +32,25 @@ class App(Application):
         self.graphics.bind("<Button-1>", func=self.MouseButtonOn)
         self.graphics.bind("<ButtonRelease-1>", func=self.MouseButtonOff)
         self.graphics.bind("<Motion>", func=self.Draw)
+        self.graphics.tag_bind(tagOrId="obj",  sequence="<Button-1>", func=lambda x: print("asd"))
         self.graphics.grid(row=0, column=1, sticky="NEWS")
 
     def MouseButtonOn(self, event):
-        print("+")
         self.begin_pos = (event.x, event.y)
-        print(self.begin_pos)
         self.is_drawing = True
 
     def MouseButtonOff(self, event):
-        print("-")
         self.begin_pos = (None, None)
-        print(self.begin_pos)
         self.is_drawing = False
+        print(self.graphics.find_all())
+        # self.current_oval.bind("<Button-1>", func=lambda e: print("!"))
         self.current_oval = None
 
     def Draw(self, event):
         if self.is_drawing:
             if self.current_oval:
                 self.graphics.delete(self.current_oval)
-                print("delete")
-            self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y)
-            print("=")
+            self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y, tags="obj", fill="#FFFFFF")
     
 
 app = App(title="Graph Edit")
