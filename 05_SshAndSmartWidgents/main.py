@@ -26,8 +26,8 @@ class App(Application):
         self.current_oval = None
         self.busy = False
         self.current_string = ""
-        self.true_string_regexpr = r"<\d+\s+\d+\s+\d+\s+\d+>\s+\d+\.\d+\s+#[0-9A-F]{6}\s+[a-zA-Z]+"
-        self.true_string_regexpr_params = r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>\s+(\d+\.\d+)\s+(#[0-9A-F]{6})\s+([a-zA-Z]+)"
+        self.true_string_regexpr = r"<\d+\s+\d+\s+\d+\s+\d+>\s+\d+\.\d+\s+#[0-9A-F]{6}\s+#[0-9A-F]{6}"
+        self.true_string_regexpr_params = r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>\s+(\d+\.\d+)\s+(#[0-9A-F]{6})\s+(#[0-9A-F]{6})"
         self.prev_pos = (None, None)
         self.www = 1
 
@@ -107,7 +107,7 @@ class App(Application):
         if self.is_drawing:
             if self.current_oval:
                 self.graphics.delete(self.current_oval)
-            self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y, tags="obj", fill="#FFFFFF", width=self.www)
+            self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y, tags="obj", fill="#FFFFFF", width=self.www, outline="#FF00FF")
             self.current_string = f"<{self.begin_pos[0]} {self.begin_pos[1]} {event.x} {event.y}>"
 
 app = App(title="Graph Edit")
