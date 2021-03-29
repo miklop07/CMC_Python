@@ -26,7 +26,8 @@ class App(Application):
         self.current_oval = None
         self.busy = False
         self.current_string = ""
-        self.true_string_regexpr = r"<\d+\s+\d+\s+\d+\s+\d+>\s+\d+\.\d+\s+#[0-9A-F]+\s+[a-zA-Z]+"
+        self.true_string_regexpr = r"<\d+\s+\d+\s+\d+\s+\d+>\s+\d+\.\d+\s+#[0-9A-F]{6}\s+[a-zA-Z]+"
+        self.true_string_regexpr_params = r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>\s+(\d+\.\d+)\s+(#[0-9A-F]{6})\s+([a-zA-Z]+)"
 
 
         self.www = 1
@@ -50,18 +51,38 @@ class App(Application):
 
     def CheckText(self, event):
         self.text.tag_remove("WrongString", 1.0, "end")
+        figures = self.graphics.find_all()
+        for oval in figures:
+            self.graphics.delete(oval)
         lines = self.text.get("1.0", "end").split("\n")
         for line_num in range(len(lines)):
-            # print(line)
-            # print(re.findall(self.true_string_regexpr, line)[0])
-            # print(line == re.findall(self.true_string_regexpr, line)[0])
-            # print(re.findall(self.true_string_regexpr, line))
             if lines[line_num] != "":
-                if re.findall(self.true_string_regexpr, lines[line_num]) == []:
+                parsed_str = re.findall(self.true_string_regexpr, lines[line_num])
+                if parsed_str == []:
                     self.text.tag_add("WrongString", f"{line_num + 1}.0", f"{line_num + 1}.end")
-                elif lines[line_num] != re.findall(self.true_string_regexpr, lines[line_num])[0]:
+                elif lines[line_num] != parsed_str[0]:
                     self.text.tag_add("WrongString", f"{line_num + 1}.0", f"{line_num + 1}.end")
-        # print(lines)
+                else:
+                    params = re.findall(self.true_string_regexpr_params, lines[line_num])
+                    print(params)
+                    self.graphics.create_oval(
+                        *params[0][:4],
+                        tags="obj",
+                        width=params[0][4],
+                        fill=params[0][5],
+                        outline=params[0][6]
+                    )
+                    # coords = re.findall(r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>", lines[line_num])
+                    # fill = 
+                    # print(coords)
+                    # print(fill)
+                    # print(width)
+                    # self.graphics.create_oval(
+                    #     *coords[0],
+                    #     tags="obj",
+                    #     fill="#FFFFFF",
+                    #     width=self.www
+                    # )
         self.text.edit_modified(False)
 
     def MoveBegin(self, event):
@@ -88,7 +109,7 @@ class App(Application):
             self.current_string += " " + str(params["width"][-1])
             self.current_string += " " + str(params["fill"][-1])
             self.current_string += " " + str(params["outline"][-1])
-            self.text.insert('end', self.current_string + "\n")
+            self.text.insert("end", self.current_string + "\n")
             self.current_string = ""
 
         self.begin_pos = (None, None)
