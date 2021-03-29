@@ -28,8 +28,7 @@ class App(Application):
         self.current_string = ""
         self.true_string_regexpr = r"<\d+\s+\d+\s+\d+\s+\d+>\s+\d+\.\d+\s+#[0-9A-F]{6}\s+[a-zA-Z]+"
         self.true_string_regexpr_params = r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>\s+(\d+\.\d+)\s+(#[0-9A-F]{6})\s+([a-zA-Z]+)"
-
-
+        self.prev_pos = (None, None)
         self.www = 1
 
     def create_widgets(self):
@@ -78,9 +77,9 @@ class App(Application):
         self.busy = True
 
     def Move(self, event):
-        pass
-        # if self.busy:
-        #     self.graphics.move(self.save, 1, 1)
+        if self.busy:
+            self.graphics.move(self.graphics.find_overlapping(event.x, event.y, event.x, event.y), event.x - self.prev_pos[0], event.y - self.prev_pos[1])
+        self.prev_pos = (event.x, event.y)
 
     def MoveEnd(self, event):
         self.busy = False
