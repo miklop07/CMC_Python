@@ -26,7 +26,7 @@ class App(Application):
         self.current_oval = None
         self.busy = False
         self.current_string = ""
-        self.true_string_regexp = r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>\s+(\d+\.\d+)\s+#([0-9A-F]+)\s+([a-zA-Z]+)"
+        self.true_string_regexpr = r"<\d+\s+\d+\s+\d+\s+\d+>\s+\d+\.\d+\s+#[0-9A-F]+\s+[a-zA-Z]+"
 
 
         self.www = 1
@@ -49,7 +49,19 @@ class App(Application):
         self.graphics.grid(row=0, column=1, sticky="NEWS")
 
     def CheckText(self, event):
-
+        self.text.tag_remove("WrongString", 1.0, "end")
+        lines = self.text.get("1.0", "end").split("\n")
+        for line_num in range(len(lines)):
+            # print(line)
+            # print(re.findall(self.true_string_regexpr, line)[0])
+            # print(line == re.findall(self.true_string_regexpr, line)[0])
+            # print(re.findall(self.true_string_regexpr, line))
+            if lines[line_num] != "":
+                if re.findall(self.true_string_regexpr, lines[line_num]) == []:
+                    self.text.tag_add("WrongString", f"{line_num + 1}.0", f"{line_num + 1}.end")
+                elif lines[line_num] != re.findall(self.true_string_regexpr, lines[line_num])[0]:
+                    self.text.tag_add("WrongString", f"{line_num + 1}.0", f"{line_num + 1}.end")
+        # print(lines)
         self.text.edit_modified(False)
 
     def MoveBegin(self, event):
