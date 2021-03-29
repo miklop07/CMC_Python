@@ -72,17 +72,6 @@ class App(Application):
                         fill=params[0][5],
                         outline=params[0][6]
                     )
-                    # coords = re.findall(r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>", lines[line_num])
-                    # fill = 
-                    # print(coords)
-                    # print(fill)
-                    # print(width)
-                    # self.graphics.create_oval(
-                    #     *coords[0],
-                    #     tags="obj",
-                    #     fill="#FFFFFF",
-                    #     width=self.www
-                    # )
         self.text.edit_modified(False)
 
     def MoveBegin(self, event):
@@ -97,7 +86,6 @@ class App(Application):
         self.busy = False
 
     def MouseButtonOn(self, event):
-        # print(self.busy)
         if not self.busy:
             self.begin_pos = (event.x, event.y)
             self.is_drawing = True
@@ -122,7 +110,6 @@ class App(Application):
                 self.graphics.delete(self.current_oval)
             self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y, tags="obj", fill="#FFFFFF", width=self.www)
             self.current_string = f"<{self.begin_pos[0]} {self.begin_pos[1]} {event.x} {event.y}>"
-            # self.save = self.current_oval
 
 app = App(title="Graph Edit")
 app.mainloop()
