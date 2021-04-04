@@ -29,6 +29,10 @@ class App(Application):
         self.true_string_regexpr = r"<\d+\s+\d+\s+\d+\s+\d+>\s+\d+\.\d+\s+#[0-9A-F]{6}\s+#[0-9A-F]{6}"
         self.true_string_regexpr_params = r"<(\d+)\s+(\d+)\s+(\d+)\s+(\d+)>\s+(\d+\.\d+)\s+(#[0-9A-F]{6})\s+(#[0-9A-F]{6})"
         self.prev_pos = (None, None)
+        self.moving_oval = None
+
+        self.figures = {}
+
         self.www = 1
 
     def create_widgets(self):
@@ -63,7 +67,6 @@ class App(Application):
                     self.text.tag_add("WrongString", f"{line_num + 1}.0", f"{line_num + 1}.end")
                 else:
                     params = re.findall(self.true_string_regexpr_params, lines[line_num])
-                    print(params)
                     self.graphics.create_oval(
                         *params[0][:4],
                         tags="obj",
@@ -73,16 +76,29 @@ class App(Application):
                     )
         self.text.edit_modified(False)
 
+    def IsMoving(self):
+        for key, value in self.figures.items():
+            if value == True:
+                return True
+        return False
+
     def MoveBegin(self, event):
-        self.busy = True
+        if not self.IsMoving():
+            self.busy = True
+            self.moving_oval = self.graphics.find_overlapping(event.x, event.y, event.x, event.y)
+            self.figures[self.moving_oval] = True
+            self.prev_pos = (event.x, event.y)
+                
 
     def Move(self, event):
         if self.busy:
-            self.graphics.move(self.graphics.find_overlapping(event.x, event.y, event.x, event.y), event.x - self.prev_pos[0], event.y - self.prev_pos[1])
+            self.graphics.move(self.moving_oval, event.x - self.prev_pos[0], event.y - self.prev_pos[1])
         self.prev_pos = (event.x, event.y)
 
     def MoveEnd(self, event):
         self.busy = False
+        self.figures[self.moving_oval] = False
+        self.moving_oval = None
 
     def MouseButtonOn(self, event):
         if not self.busy:
@@ -108,6 +124,7 @@ class App(Application):
             if self.current_oval:
                 self.graphics.delete(self.current_oval)
             self.current_oval = self.graphics.create_oval(*self.begin_pos, event.x, event.y, tags="obj", fill="#FFFFFF", width=self.www, outline="#FF00FF")
+            self.figures[self.current_oval] = False
             self.current_string = f"<{self.begin_pos[0]} {self.begin_pos[1]} {event.x} {event.y}>"
 
 app = App(title="Graph Edit")
